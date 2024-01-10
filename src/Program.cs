@@ -13,14 +13,12 @@ namespace CsvToSqlServer
         static void Main()
         {
             string csvFilePath = "test.csv";
-            string connectionString = "Data Source=localhost;Initial Catalog=master;User ID=sa;Password=3qoLxoCRw7;";
             string dataLoadConnectionString = "Data Source=localhost;Initial Catalog=CsvToSqlServerDatabase;User ID=DataLoadUser;Password=3qoLxoCRw7;";
 
             try
             {
                 // Read CSV file
                 List<Customer> dataRecords = ReadCsvFile(csvFilePath);
-
 
                 // Insert data into MSSQL database
                 InsertDataIntoDatabase(dataRecords, dataLoadConnectionString);
@@ -39,39 +37,6 @@ namespace CsvToSqlServer
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 return csv.GetRecords<Customer>().ToList();
-            }
-        }
-
-        static void createDatabaseAndTables(string connectionString)
-        {
-            runSqlScript("schema.sql",connectionString);
-        }
-
-        static void runSqlScript(string scriptFilePath,string connectionString)
-        {
-            try
-            {
-                // Read the SQL script from the file
-                string sqlScript = File.ReadAllText(scriptFilePath);
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    // Open the connection
-                    connection.Open();
-
-                    // Create a command object
-                    using (SqlCommand command = new SqlCommand(sqlScript, connection))
-                    {
-                        // Execute the SQL script
-                        command.ExecuteNonQuery();
-                    }
-
-                    Console.WriteLine("SQL script executed successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
             }
         }
 
